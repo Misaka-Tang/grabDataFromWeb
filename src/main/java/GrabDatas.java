@@ -14,6 +14,7 @@ public class GrabDatas {
     private List<String> questions;
 
     public void getDatas(Web web) {
+        answerSet = new ArrayList<>();
         countTypeQ = new ArrayList<>();
         questions = new ArrayList<>();
         doc = web.getDocument();
@@ -43,35 +44,34 @@ public class GrabDatas {
                 questions.add(elm.text());
             }
         }
-        //start to iterate ans
-        int i=0;
-        answerSet=new ArrayList<>();
-        for (Element elm : elmsAus) {
-            int count=countTypeQ.get(i);
-            Elements listElm = elm.getElementsByTag("strong");
-            //store multiple choices ans
-//            List<String>curAns=new ArrayList<>();
-            for (Element iterator : listElm) {
-                System.out.println(iterator.text());
-//                curAns.add(iterator.text());
-//                count--;
-//                if(count==0){
-//                    answerSet.add(curAns);
-//                    i++;
-//                }
+        //iterate list of countTypeQ to store how many answers the question it has
+        List<String> ansList = listAnswers(web);
+        int j = 0;
+        for (int i = 0; i < countTypeQ.size(); i++) {
+            int count = countTypeQ.get(i);
+            List<String> curList = new ArrayList<>();
+            while (count > 0 && j < ansList.size()) {
+                curList.add(ansList.get(j));
+                j++;
+                count--;
             }
+            answerSet.add(curList);
         }
+//        System.out.println(answerSet);
+        System.out.println(questions);
     }
 
-    public void listAnswers(Web web) {
+    public List<String> listAnswers(Web web) {
+        List<String> answers = new ArrayList<>();
         doc = web.getDocument();
         Elements elmsAus = doc.getElementsByTag("li");
         for (Element elm : elmsAus) {
             Elements listElm = elm.getElementsByTag("strong");
             for (Element iterator : listElm) {
-                System.out.println(iterator.text());
+                answers.add(iterator.text());
             }
         }
+        return answers;
     }
 }
 
